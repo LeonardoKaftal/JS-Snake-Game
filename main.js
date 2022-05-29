@@ -1,16 +1,20 @@
+const scoreDiv = document.querySelector(".score");
 const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 125;
-canvas.height = 125;
+
+canvas.width = 165;
+canvas.height = 165;
 
 
 
 
 // function that start and control the game
 const gameController = (() => {
-    const snakePart = [];
-    let gameSpeed = 20;
+    const scl = 5;
+    let snakePart = [];
+    let score = 0;
+    let gameSpeed = 10;
     let snakeTailLenght = 0;
 
     class Snake {
@@ -23,8 +27,8 @@ const gameController = (() => {
 
 
         move() {
-            this.x += this.xVelocity;
-            this.y += this.yVelocity;
+            this.x += this.xVelocity * scl;
+            this.y += this.yVelocity * scl;
         }
     }
 
@@ -54,122 +58,109 @@ const gameController = (() => {
     const apple = new Apple();
 
     // snake moviment
-    document.body.addEventListener("keydown", e => {    
-        // up
-        if (e.key === "ArrowUp") {
-            if (head.yVelocity === 1 || head.yVelocity === -1) {
-                return;
-            }
-            // if was going right 
-            if (head.xVelocity === 1) {
-                head.x = Math.ceil(head.x / 5) * 5;
-                head.xVelocity = 0;
-                head.yVelocity = -1;  
-            }
-            // if was going left
-            else {
-                head.x = Math.floor(head.x / 5) * 5;
+    document.body.addEventListener("keydown", e => {
+        switch (e.key) {
+            case "ArrowUp":
+                if (head.yVelocity === 1 || head.yVelocity === -1) {
+                    return;
+                }
                 head.xVelocity = 0;
                 head.yVelocity = -1;
-            } 
-        }      
+                break;
 
-        // down
-        else if (e.key === "ArrowDown") {
-            if (head.yVelocity === -1 || head.yVelocity === 1) {
-                return;
-            }
-            // if was going right 
-            if (head.xVelocity === 1) {
-                head.x = Math.ceil(head.x / 5) * 5;
-                head.xVelocity = 0;
-                head.yVelocity = 1;  
-            }
-            // if was going left
-            else {
-                head.x = Math.floor(head.x / 5) * 5;
+            case "ArrowDown":
+                if (head.yVelocity === -1 || head.yVelocity === 1) {
+                    return;
+                }
                 head.xVelocity = 0;
                 head.yVelocity = 1;
-            }
+                break;
+
+            case "ArrowLeft":
+                if (head.xVelocity === 1 || head.xVelocity === -1) {
+                    return;
+                }
+                head.xVelocity = -1;
+                head.yVelocity = 0;
+                break;
+
+            case "ArrowRight":
+                if (head.xVelocity === 1 || head.xVelocity === -1) {
+                    return;
+                }
+                head.xVelocity = 1;
+                head.yVelocity = 0;
+                break;
         }
-
-        // left
-        else if (e.key === "ArrowLeft") {
-            if (head.xVelocity === 1 || head.xVelocity === -1) {
-                return;
-            }
-            // if was going up
-            if (head.yVelocity === -1) {
-                head.y = Math.ceil(head.y / 5) * 5;
-                head.xVelocity = -1;
-                head.yVelocity = 0;
-            }
-            // if was goind down
-            else {
-                head.y = Math.floor(head.y / 5) * 5;
-                head.xVelocity = -1;
-                head.yVelocity = 0;    
-            }
-        } 
-
-        // right 
-        else if (e.key === "ArrowRight") {
-            if (head.xVelocity === 1 || head.xVelocity === -1) {
-                return;
-            } 
-            // if was going up
-            if (head.yVelocity === -1) {
-                head.y = Math.ceil(head.y / 5) * 5;
-                head.xVelocity = 1;
-                head.yVelocity = 0;
-            }
-            // if was goind down
-            else {
-                head.y = Math.floor(head.y / 5) * 5;
-                head.xVelocity = 1;
-                head.yVelocity = 0;
-            }
-        }             
     })
 
 
     // loop function
     function draw() {
         setTimeout(draw, 1000 / gameSpeed);
+        checkCollision();       // game over
         appleCollision();
         drawSnake();
         head.move();
     }
 
+    function checkCollision() {
+        if (head.x < 0 || head.x > 160) {
+            gameOver();
+        }
+        if (head.y < 0 || head.y > 169) {
+            gameOver();
+        }
 
-    function appleCollision() {
-        if (head.x === apple.x && head.y=== apple.y) {
-            apple.generateNewApple();
-            snakeTailLenght += 10;
+        snakePart.forEach(element => {
+            if (head.x === element.x && head.y === element.y) {
+                gameOver();
+            }
+        })
+
+        function gameOver() {
+            score = 0;
+            scoreDiv.textContent = "Score: " + score;
+            snakeTailLenght = 0;
+            snakePart = [];
+            head.x = 50;
+            head.y = 50;
         }
     }
+
+    function appleCollision() {
+        if (head.x === apple.x && head.y === apple.y) {
+            apple.generateNewApple();
+            snakeTailLenght += 2;
+            updateScore();
+        }
+
+        function updateScore() {
+            score++;
+            scoreDiv.textContent = "Score: " + score;
+        }
+    }
+
 
     function drawSnake() {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "green";
-        
+
         // draw new snake part
         for (let i = 0; i < snakePart.length; i++) {
             let part = snakePart[i];
             part.x = Math.round(part.x / 5) * 5;
             part.y = Math.round(part.y / 5) * 5;
-            ctx.fillRect(part.x, part.y,5,5);
+            ctx.fillRect(part.x, part.y, 5, 5);
         }
 
-        snakePart.push(new SnakePart(head.x,head.y));
-        
+        snakePart.push(new SnakePart(head.x, head.y));
         if (snakePart.length > snakeTailLenght) {
             snakePart.shift();
         }
-        
-        ctx.fillRect(head.x, head.y, 5, 5);
 
+        ctx.fillRect(head.x, head.y, 5, 5);
         ctx.fillStyle = "red";
         ctx.fillRect(apple.x, apple.y, 5, 5);
     }
@@ -178,3 +169,39 @@ const gameController = (() => {
     draw();
 })();
 
+
+
+/*
+// up
+        if (e.key === "ArrowUp") {
+            if (head.yVelocity === 1 || head.yVelocity === -1) {
+                return;
+            }
+            head.xVelocity = 0;
+            head.yVelocity = -1;
+        }      
+        // down
+        else if (e.key === "ArrowDown") {
+            if (head.yVelocity === -1 || head.yVelocity === 1) {
+                return;
+            }
+            head.xVelocity = 0;
+            head.yVelocity = 1;
+        }
+        // left
+        else if (e.key === "ArrowLeft") {
+            if (head.xVelocity === 1 || head.xVelocity === -1) {
+                return;
+            }
+            head.xVelocity = -1;
+            head.yVelocity = 0;  
+        } 
+        // right 
+        else if (e.key === "ArrowRight") {
+            if (head.xVelocity === 1 || head.xVelocity === -1) {
+                return;
+            } 
+            head.xVelocity = 1;
+            head.yVelocity = 0;  
+        }  
+*/
