@@ -61,8 +61,15 @@ nav {
 nav h1 {
     color: rgb(63, 126, 63);
 }
+.score-container {
+    position: relative;
+    top: 2rem;
+}
+.score {
+    margin-left: 25%;
+}
 main {
-    height: 100%;
+    height: 90%;
     display: flex;
     justify-content: center;
     align-items: center;
