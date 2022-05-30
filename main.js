@@ -108,7 +108,7 @@ const gameController = (() => {
         if (head.x < 0 || head.x > 160) {
             gameOver();
         }
-        if (head.y < 0 || head.y > 169) {
+        if (head.y < 0 || head.y > 160) {
             gameOver();
         }
 
