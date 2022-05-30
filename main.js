@@ -170,38 +170,3 @@ const gameController = (() => {
 })();
 
 
-
-/*
-// up
-        if (e.key === "ArrowUp") {
-            if (head.yVelocity === 1 || head.yVelocity === -1) {
-                return;
-            }
-            head.xVelocity = 0;
-            head.yVelocity = -1;
-        }      
-        // down
-        else if (e.key === "ArrowDown") {
-            if (head.yVelocity === -1 || head.yVelocity === 1) {
-                return;
-            }
-            head.xVelocity = 0;
-            head.yVelocity = 1;
-        }
-        // left
-        else if (e.key === "ArrowLeft") {
-            if (head.xVelocity === 1 || head.xVelocity === -1) {
-                return;
-            }
-            head.xVelocity = -1;
-            head.yVelocity = 0;  
-        } 
-        // right 
-        else if (e.key === "ArrowRight") {
-            if (head.xVelocity === 1 || head.xVelocity === -1) {
-                return;
-            } 
-            head.xVelocity = 1;
-            head.yVelocity = 0;  
-        }  
-*/
